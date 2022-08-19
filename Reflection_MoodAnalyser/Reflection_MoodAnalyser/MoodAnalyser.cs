@@ -6,27 +6,37 @@ using System.Threading.Tasks;
 
 namespace Reflection_MoodAnalyser
 {
-    public class MoodAnalysis
+    public class MoodAnalyser
     {
-        public string message;
+        string message;
 
-        public MoodAnalysis()
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public MoodAnalyser()
         {
-            Console.WriteLine("Default Constructor");
+            this.message = null;
         }
-        public MoodAnalysis(string message)//constructor
+        /// <summary>
+        /// parameterised constructor with null or empty message 
+        /// </summary>
+        public MoodAnalyser(string message)
         {
             this.message = message;
         }
-        public string AnalyseMood() //method to analyse mood
+
+        /// <summary>
+        /// Method to analyse mood with custom exception
+        /// </summary>
+        public string AnalyserMood()
         {
             try
             {
-                if (this.message.Equals(""))
+                if (this.message.Equals(string.Empty))
                 {
                     throw new CustomException(CustomException.ExceptionType.EMPTY_MOOD, "Mood should not be empty");
                 }
-                else if (this.message.ToLower().Contains("sad"))
+                if (this.message.Contains("SAD"))
                 {
                     return "SAD";
                 }
@@ -37,7 +47,7 @@ namespace Reflection_MoodAnalyser
             }
             catch (NullReferenceException)
             {
-                throw new CustomException(CustomException.ExceptionType.NULL_MOOD, "Mood should not be null");
+                throw new CustomException(CustomException.ExceptionType.NULL_MOOD, "Mood should not be null message");
             }
         }
     }
