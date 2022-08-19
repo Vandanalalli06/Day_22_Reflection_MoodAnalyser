@@ -6,88 +6,84 @@ namespace Reflection_MoodAnalyser
 {
     public class MoodAnalyserFactory
     {
-        /// <summary>
-        /// CreateMoodAnalyse method to create object of MoodAnalyse class.  
-
-        /// </summary>
-        /// <param name="className"></param>
-        /// <param name="constructorName"></param>
-        /// <returns></returns>
-        /// <exception cref="MoodAnalysisException"></exception>
-        public static object CreateMoodAnalyse(string className, string constructorName)
+        public object CreatemoodAnalyse(string className, string constructorName)
         {
-            string pattern = "." + constructorName + "$";
+            string pattern = @"." + constructorName + "$";
             Match result = Regex.Match(className, pattern);
+
             if (result.Success)
             {
                 try
                 {
                     Assembly executing = Assembly.GetExecutingAssembly();
-                    Type moodAnaylseType = executing.GetType(className);
-                    return Activator.CreateInstance(moodAnaylseType);
-
+                    Type moodAnalyseType = executing.GetType(className);
+                    return Activator.CreateInstance(moodAnalyseType);
                 }
                 catch (ArgumentNullException)
                 {
-                    throw new CustomException(CustomException.ExceptionType.NO_SUCH_CLASS, "Class Not Found");
+                    throw new CustomException(CustomException.ExceptionType.NO_SUCH_CLASS, "class not found");
                 }
-
             }
             else
             {
-                throw new CustomException(CustomException.ExceptionType.NO_SUCH_METHOD, "Constructor is Not Found");
+                throw new CustomException(CustomException.ExceptionType.NO_SUCH_METHOD, "constructor not found");
             }
         }
-
-        public static string SetField(string v1, string v2)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// UC-5 For parameterised constructor by pssing messge parameter to the class method
-        /// </summary>
-
-        public static object CreateMoodAnalyseUsingParameterizedConstructor(string className, string constructorName)
+        public object CreateMoodAnalyseParameterObject(string className, string constructorName, string message)
         {
             Type type = typeof(MoodAnalyser);
             if (type.Name.Equals(className) || type.FullName.Equals(className))
             {
                 if (type.Name.Equals(constructorName))
                 {
-                    ConstructorInfo construct = type.GetConstructor(new[] { typeof(string) });
-                    object instance = construct.Invoke(new object[] { "HAPPY" });
-                    return instance;
+                    ConstructorInfo constructorInfo = type.GetConstructor(new Type[] { typeof(string) });
+                    var obj = constructorInfo.Invoke(new object[] { message });
+                    return obj;
                 }
-
                 else
                 {
-                    throw new CustomException(CustomException.ExceptionType.NO_SUCH_METHOD, "Method not found");
+                    throw new CustomException(CustomException.ExceptionType.NO_SUCH_METHOD, "could not find constructor");
                 }
             }
             else
             {
-                throw new CustomException(CustomException.ExceptionType.NO_SUCH_CLASS, "Class not found");
+                throw new CustomException(CustomException.ExceptionType.NO_SUCH_CLASS, "could not find class");
             }
         }
-        // UC6: Use Reflection to invoke Method
-        /// </summary>
-
-        public static string InvokeAnalyseMood(string message, string methodName)
+        public string InvokeAnalyseMood(string message, string methodName)
         {
             try
             {
-                Type type = Type.GetType("MoodAnalyserReflections.MoodAnalyser");
-                object moodAnalyseObject = MoodAnalyserFactory.CreateMoodAnalyseUsingParameterizedConstructor("MoodAnalyserReflections.MoodAnalyser", "MoodAnalyser");
-                MethodInfo analyseMoodInfo = type.GetMethod(methodName);
-                object mood = analyseMoodInfo.Invoke(moodAnalyseObject, null);
-                return mood.ToString();
-
+                Type type = typeof(MoodAnalyser);
+                MethodInfo methodInfo = type.GetMethod(methodName);
+                MoodAnalyserFactory reflector = new MoodAnalyserFactory();
+                object moodAnalyserObject = reflector.CreateMoodAnalyseParameterObject("MoodAnalyser.MoodAnalysis", "MoodAnalysis", message);
+                object info = methodInfo.Invoke(moodAnalyserObject, null);
+                return info.ToString();
             }
             catch (NullReferenceException)
             {
-                throw new CustomException(CustomException.ExceptionType.NO_SUCH_METHOD, "Method not found");
+                throw new CustomException(CustomException.ExceptionType.NO_SUCH_METHOD, "method not found");
+            }
+        }
+        public string SetField(string message, string fieldName)
+        {
+            try
+            {
+                MoodAnalyser moodAnalyzer = new MoodAnalyser();
+                Type type = typeof(MoodAnalyser);
+                FieldInfo fieldInfo = type.GetField(fieldName, BindingFlags.Public | BindingFlags.Instance);
+                if (message == null)
+                {
+                    throw new CustomException(CustomException.ExceptionType.EMPTY_MESSAGE, "message should not be null");
+                }
+                fieldInfo.SetValue(moodAnalyzer, message);
+                return moodAnalyzer.message;
+            }
+            catch (NullReferenceException)
+            {
 
+                throw new CustomException(CustomException.ExceptionType.NO_SUCH_FIELD, "field not found");
             }
         }
     }

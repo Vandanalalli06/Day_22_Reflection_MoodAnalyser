@@ -14,7 +14,9 @@ namespace Reflection_MoodAnalyser
             NULL_MOOD,
             EMPTY_MOOD,
             NO_SUCH_CLASS,
-            NO_SUCH_METHOD
+            NO_SUCH_METHOD,
+            EMPTY_MESSAGE,
+            NO_SUCH_FIELD
         }
         public CustomException(ExceptionType exceptionType, string message) : base(message)
         {
@@ -22,3 +24,4 @@ namespace Reflection_MoodAnalyser
         }
     }
 }
+    
