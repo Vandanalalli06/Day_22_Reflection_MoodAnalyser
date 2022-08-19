@@ -39,6 +39,11 @@ namespace Reflection_MoodAnalyser
             }
         }
 
+        public static string SetField(string v1, string v2)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// UC-5 For parameterised constructor by pssing messge parameter to the class method
         /// </summary>
@@ -63,6 +68,26 @@ namespace Reflection_MoodAnalyser
             else
             {
                 throw new CustomException(CustomException.ExceptionType.NO_SUCH_CLASS, "Class not found");
+            }
+        }
+        // UC6: Use Reflection to invoke Method
+        /// </summary>
+
+        public static string InvokeAnalyseMood(string message, string methodName)
+        {
+            try
+            {
+                Type type = Type.GetType("MoodAnalyserReflections.MoodAnalyser");
+                object moodAnalyseObject = MoodAnalyserFactory.CreateMoodAnalyseUsingParameterizedConstructor("MoodAnalyserReflections.MoodAnalyser", "MoodAnalyser");
+                MethodInfo analyseMoodInfo = type.GetMethod(methodName);
+                object mood = analyseMoodInfo.Invoke(moodAnalyseObject, null);
+                return mood.ToString();
+
+            }
+            catch (NullReferenceException)
+            {
+                throw new CustomException(CustomException.ExceptionType.NO_SUCH_METHOD, "Method not found");
+
             }
         }
     }

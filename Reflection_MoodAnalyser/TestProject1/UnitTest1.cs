@@ -3,62 +3,56 @@ using Reflection_MoodAnalyser;
 
 namespace Reflection_MoodAnalyser
 {
-
-    public class AnalyseMoodTestCases
+    public class Tests
     {
-        MoodAnalyserFactory moodAnalyserFactory = new MoodAnalyserFactory();
+        MoodAnalyserFactory moodAnalyserfactory;
         [SetUp]
         public void Setup()
         {
-            moodAnalyserFactory = new MoodAnalyserFactory();
+            moodAnalyserfactory = new MoodAnalyserFactory();
         }
 
-        //TC 4.1 - Proper class details are provided and expected to return the MoodAnalyser Object
-
-        [TestCase("MoodAnalyser.MoodAnalysis", "MoodAnalysis")]
-        public void GivenMoodAnalyzerClassName_ReturnMoodAnalysisObject(string className, string constructorName)
+        /// <summary>
+        /// TC-7.1  Given Hppy Should Return Happy
+        /// </summary>
+        [Test]
+        public void Given_HAPPYMessage_WithReflector_Should_ReturnHAPPY()
         {
-            MoodAnalysis expected = new MoodAnalysis();
-            object obj;
-
-            MoodAnalyserFactory factory = new MoodAnalyserFactory();
-            obj = factory.CreatemoodAnalyse(className, constructorName);
-            expected.Equals(obj);
+            string result = MoodAnalyserFactory.SetField("HAPPY", "message");
+            Assert.AreEqual("HAPPY", result);
         }
-        //TC 4.2 - improper class details are provided and expected to throw exception Class not found
 
-        [TestCase("Mood.MoodAnalysis", "MoodAnalysis", "class not found")]
-        public void GivenImproperClassName_ShouldThrowCustomException(string className, string constructorName, string expected)
-        {
-            try
-            {
-                MoodAnalyserFactory factory = new MoodAnalyserFactory();
-                object actual = factory.CreatemoodAnalyse(className, constructorName);
-            }
-            catch (CustomException ex)
-            {
-                Assert.AreEqual(expected, ex.Message);
-            }
-        }
-        //TC 4.3 - improper constructor details are provided and expected to throw exception Constructor not found
-
-        [TestCase("MoodAnalyser.MoodAnalysis", "Mood", "constructor not found")]
-        public void GivenImproperConstructorName_ShouldThrowCustomException(string className, string constructorName, string expected)
+        /// <summary>
+        /// TC-7.2  Set Field When Improper Should Throw Exception 
+        /// </summary>
+        [Test]
+        public void SetField_ImProper_ShouldThrowException()
         {
             try
             {
-                MoodAnalyserFactory factory = new MoodAnalyserFactory();
-                object actual = factory.CreatemoodAnalyse(className, constructorName);
+                string result = MoodAnalyserFactory.SetField("HAPPY", "me");
             }
-            catch (CustomException ex)
+            catch (CustomException exception)
             {
-                Assert.AreEqual(expected, ex.Message);
+                Assert.AreEqual("Field is not found", exception.Message);
             }
         }
 
+        /// <summary>
+        /// TC-7.3  Set Null Messge  Should Throw Exception 
+        /// </summary>
+        [Test]
+        public void Setting_NullMessge_ShouldThrowException()
+        {
+            try
+            {
+                string result = MoodAnalyserFactory.SetField(null, "message");
+            }
+            catch (CustomException exception)
+            {
+                Assert.AreEqual("Message should not be null", exception.Message);
+            }
+        }
     }
 }
 
-//UC-4
-//Use Reflection to Create MoodAnalyser with default Constructor 
-//- Create MoodAnalyserFactory and specify static method to create MoodAnalyser Object
